@@ -1,8 +1,7 @@
 package org.hae.tasklogue.controllers;
 
-import lombok.AllArgsConstructor;
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
-import org.hae.tasklogue.dto.response.Response;
+import org.hae.tasklogue.dto.response.CreationResponse;
 import org.hae.tasklogue.service.userService.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +18,8 @@ public class UsersController {
 
 
     @PostMapping(value = "/create_account")
-    public ResponseEntity<Response> createAccount(@RequestBody ApplicationUserSignUp applicationUserSignUp) {
-        ResponseEntity<Response> response = userService.createUser(applicationUserSignUp);
+    public ResponseEntity<CreationResponse> createAccount(@RequestBody ApplicationUserSignUp applicationUserSignUp) {
+        ResponseEntity<CreationResponse> response = userService.createUser(applicationUserSignUp);
         return response;
     }
 

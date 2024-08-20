@@ -1,7 +1,9 @@
 package org.hae.tasklogue.service.userService;
 
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
-import org.hae.tasklogue.dto.response.Response;
+import org.hae.tasklogue.dto.requestdto.LoginRequest;
+import org.hae.tasklogue.dto.response.ApplicationUserResponse;
+import org.hae.tasklogue.dto.response.CreationResponse;
 import org.hae.tasklogue.entity.ApplicationUser;
 import org.hae.tasklogue.exceptions.AccountExist;
 import org.hae.tasklogue.exceptions.EmptyRequiredFields;
@@ -15,37 +17,77 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
     @Autowired
     private ApplicationUserRepository applicationUserRepository;
 
     @Override
-    public ResponseEntity<Response> createUser(ApplicationUserSignUp applicationUserSignUp) {
-        Optional<ApplicationUser> findUser = applicationUserRepository.findApplicationUserByUserNameOrEmail(applicationUserSignUp.getUserName(), applicationUserSignUp.getEmail());
-        if (findUser.isPresent()) {
-            throw new AccountExist("An account with this username already exists");
+    public ResponseEntity<CreationResponse> createUser(ApplicationUserSignUp applicationUserSignUp) {
+        try {
+            validateInput(applicationUserSignUp);
+            Optional<ApplicationUser> existingUser = applicationUserRepository.findApplicationUserByUserNameOrEmail(applicationUserSignUp.getUserName(), applicationUserSignUp.getEmail());
+            if (existingUser.isPresent()) {
+                throw new AccountExist("An account with this username already exists");
+            }
+            CreationResponse creationResponse = getResponse(applicationUserSignUp);
+            return ResponseEntity.ok(creationResponse);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
         }
-        if (applicationUserSignUp.getUserName().isEmpty() || applicationUserSignUp.getEmail().isEmpty() || applicationUserSignUp.getPassword().isEmpty()) {
-            throw new EmptyRequiredFields("required fields are empty");
-        }
-        Response response = getResponse(applicationUserSignUp);
-
-
-        return ResponseEntity.ok(response);
     }
 
-    private Response getResponse(ApplicationUserSignUp applicationUserSignUp) {
+
+
+    public ResponseEntity<ApplicationUserResponse> getApplicationUserDetails(LoginRequest loginRequest){
+
+           Optional<ApplicationUser> user = applicationUserRepository.findApplicationUserByUserNameOrEmail(applicationUser.getEmail(), applicationUser.getUserName());
+           if (!user.isPresent()){
+               ApplicationUserResponse applicationUserResponse = new ApplicationUserResponse();
+               ApplicationUser  userInfo = user.get();
+               applicationUserResponse.setPhotoUrl(userInfo.getPhotoUrl());
+               applicationUserResponse.setUserName(userInfo.getUserName());
+               applicationUserResponse.setDisplayName(userInfo.getDisplayName());
+               applicationUserResponse.setBio(userInfo.getBio());
+               applicationUserResponse.setUserTasks(userInfo.getUserTasks());
+       }else {
+               throw new RuntimeException("err");
+           }
+
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private CreationResponse getResponse(ApplicationUserSignUp applicationUserSignUp) {
         ApplicationUser user = new ApplicationUser();
         user.setUserName(applicationUserSignUp.getUserName());
         user.setEmail(applicationUserSignUp.getEmail());
-        user.setDisplayName(applicationUserSignUp.getDisplayName());
-        user.setBio(applicationUserSignUp.getBio());
-        user.setPhotoUrl(applicationUserSignUp.getPhotoUrl());
         user.setSecretPassword(applicationUserSignUp.getPassword());
-        applicationUserRepository.save(user);
-        Response response = new Response();
-        response.setStatus(HttpStatus.CREATED);
-        response.setMessage(user.getUserName() + " successfully created");
-        return response;
-    }
 
+
+        applicationUserRepository.save(user);
+        CreationResponse creationResponse = new CreationResponse();
+        creationResponse.setStatusCode(201);
+        creationResponse.setStatus(HttpStatus.CREATED);
+        creationResponse.setMessage(user.getUserName() + " successfully created");
+        return creationResponse;
+    }
+    private void validateInput(ApplicationUserSignUp applicationUserSignUp) {
+        if (applicationUserSignUp.getUserName().trim().isEmpty() || applicationUserSignUp.getEmail().trim().isEmpty() || applicationUserSignUp.getPassword().isEmpty()) {
+            throw new EmptyRequiredFields("required fields are empty");
+        }
+    }
 }

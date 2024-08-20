@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Response {
+public class CreationResponse {
+    private Integer statusCode;
     private HttpStatus status;
     private String message;
 }

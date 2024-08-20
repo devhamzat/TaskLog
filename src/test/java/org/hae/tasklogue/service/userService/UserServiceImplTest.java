@@ -1,7 +1,7 @@
 package org.hae.tasklogue.service.userService;
 
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
-import org.hae.tasklogue.dto.response.Response;
+import org.hae.tasklogue.dto.response.CreationResponse;
 import org.hae.tasklogue.entity.ApplicationUser;
 import org.hae.tasklogue.exceptions.AccountExist;
 import org.hae.tasklogue.exceptions.EmptyRequiredFields;
@@ -40,9 +40,6 @@ class UserServiceImplTest {
         signUp.setUserName("testuser");
         signUp.setEmail("test@example.com");
         signUp.setPassword("password");
-        signUp.setDisplayName("Test User");
-        signUp.setBio("Test bio");
-        signUp.setPhotoUrl("http://example.com/photo.jpg");
 
         when(applicationUserRepository.findApplicationUserByUserNameOrEmail(anyString(), anyString()))
                 .thenReturn(Optional.empty());
@@ -52,10 +49,10 @@ class UserServiceImplTest {
 
         // Assert
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertTrue(responseEntity.getBody() instanceof Response);
-        Response response = (Response) responseEntity.getBody();
-        assertEquals(HttpStatus.CREATED, response.getStatus());
-        assertEquals("testuser successfully created", response.getMessage());
+        assertTrue(responseEntity.getBody() instanceof CreationResponse);
+        CreationResponse creationResponse = (CreationResponse) responseEntity.getBody();
+        assertEquals(HttpStatus.CREATED, creationResponse.getStatus());
+        assertEquals("testuser successfully created", creationResponse.getMessage());
     }
 
     @Test

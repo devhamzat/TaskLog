@@ -30,7 +30,7 @@ public class ApplicationUser {
     @Id
     @Column(name = "userName",nullable = false)
     private String userName;
-    @Column(name = "display_name",nullable = false)
+    @Column(name = "display_name")
     private String displayName;
     @Column(name = "email",nullable = false)
     @Email
