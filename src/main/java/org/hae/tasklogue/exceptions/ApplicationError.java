@@ -8,5 +8,4 @@ import lombok.Setter;
 public class ApplicationError {
     private int code;
     private String message;
-    private String details;
 }

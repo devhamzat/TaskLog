@@ -1,4 +1,4 @@
-package org.hae.tasklogue.utils;
+package org.hae.tasklogue.utils.enums;
 
 public enum TaskStatus {
     pending,

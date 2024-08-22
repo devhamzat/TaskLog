@@ -1,9 +1,7 @@
 package org.hae.tasklogue.exceptions;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,15 +15,23 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         ApplicationError error = new ApplicationError();
         error.setCode(409);
         error.setMessage(exist.getMessage());
-        error.setDetails(exist.getLocalizedMessage());
+
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(EmptyRequiredFields.class)
-    public ResponseEntity<ApplicationError> handleEmptyRequiredFields(EmptyRequiredFields exist) {
+    public ResponseEntity<ApplicationError> handleEmptyRequiredFields(EmptyRequiredFields emptyRequiredFields) {
         ApplicationError error = new ApplicationError();
         error.setCode(422);
-        error.setMessage(exist.getMessage());
-        error.setDetails(exist.getLocalizedMessage());
+        error.setMessage(emptyRequiredFields.getMessage());
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ActivationCodeExpired.class)
+    public ResponseEntity<ApplicationError> handleActivationCodeExpired(ActivationCodeExpired activationCodeExpired) {
+        ApplicationError error = new ApplicationError();
+        error.setCode(410);
+        error.setMessage(activationCodeExpired.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
     }
 }

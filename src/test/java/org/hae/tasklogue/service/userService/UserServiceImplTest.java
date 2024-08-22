@@ -2,7 +2,7 @@ package org.hae.tasklogue.service.userService;
 
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
 import org.hae.tasklogue.dto.response.CreationResponse;
-import org.hae.tasklogue.entity.ApplicationUser;
+import org.hae.tasklogue.entity.applicationUser.ApplicationUser;
 import org.hae.tasklogue.exceptions.AccountExist;
 import org.hae.tasklogue.exceptions.EmptyRequiredFields;
 import org.hae.tasklogue.repository.ApplicationUserRepository;
