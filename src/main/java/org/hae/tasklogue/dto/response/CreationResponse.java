@@ -11,5 +11,4 @@ import org.springframework.http.HttpStatus;
 public class CreationResponse {
     private Integer statusCode;
     private HttpStatus status;
-    private String message;
 }

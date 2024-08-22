@@ -10,7 +10,8 @@ import org.hae.tasklogue.dto.response.CreationResponse;
 import org.hae.tasklogue.entity.Role;
 import org.hae.tasklogue.entity.applicationUser.ApplicationUser;
 import org.hae.tasklogue.entity.applicationUser.Token;
-import org.hae.tasklogue.exceptions.ActivationCodeExpired;
+import org.hae.tasklogue.exceptions.errors.AccountExist;
+import org.hae.tasklogue.exceptions.errors.ActivationCodeExpired;
 import org.hae.tasklogue.repository.ApplicationUserRepository;
 import org.hae.tasklogue.repository.RoleRepository;
 import org.hae.tasklogue.repository.TokenRepository;
@@ -54,6 +55,8 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private TokenRepository tokenRepository;
 
+    AuthServiceImpl authService;
+
 
     public AuthServiceImpl(PasswordEncoder passwordEncoder, EmailService emailService, JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
@@ -61,8 +64,14 @@ public class AuthServiceImpl implements AuthService {
         this.jwtService = jwtService;
     }
 
+    @Override
     public ResponseEntity<CreationResponse> register(@Valid ApplicationUserSignUp applicationUserSignUp) throws MessagingException {
+
         Optional<Role> userRole = roleRepository.findByName("USER");
+        Optional<ApplicationUser> existingUser = applicationUserRepository.findApplicationUserByUserName(applicationUserSignUp.getUserName());
+        if (existingUser.isPresent()) {
+            throw new AccountExist("username already in username or email already in use, sign in");
+        }
         ApplicationUser applicationUser = new ApplicationUser();
         applicationUser.setUserName(applicationUserSignUp.getUserName());
         applicationUser.setEmail(applicationUserSignUp.getEmail());
@@ -106,8 +115,9 @@ public class AuthServiceImpl implements AuthService {
             throw new ActivationCodeExpired("Activation token has expired. A new token has been sent to the same email address");
         }
 
-        activateAccountTransactional(tokenUser);
+        authService.activateAccountTransactional(tokenUser);
     }
+
 
     @Transactional
     protected void activateAccountTransactional(Token tokenUser) {

@@ -3,8 +3,8 @@
 //import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
 //import org.hae.tasklogue.dto.response.CreationResponse;
 //import org.hae.tasklogue.entity.applicationUser.ApplicationUser;
-//import org.hae.tasklogue.exceptions.AccountExist;
-//import org.hae.tasklogue.exceptions.EmptyRequiredFields;
+//import org.hae.tasklogue.exceptions.errors.AccountExist;
+//import org.hae.tasklogue.exceptions.errors.EmptyRequiredFields;
 //import org.hae.tasklogue.repository.ApplicationUserRepository;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.http.HttpStatus;
