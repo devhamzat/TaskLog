@@ -3,7 +3,7 @@ package org.hae.tasklogue.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hae.tasklogue.utils.TaskStatus;
+import org.hae.tasklogue.utils.enums.TaskStatus;
 
 @Data
 @NoArgsConstructor
