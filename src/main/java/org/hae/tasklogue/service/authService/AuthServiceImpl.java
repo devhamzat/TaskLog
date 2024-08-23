@@ -3,6 +3,7 @@ package org.hae.tasklogue.service.authService;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import lombok.NoArgsConstructor;
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
 import org.hae.tasklogue.dto.requestdto.SignInRequest;
 import org.hae.tasklogue.dto.response.AuthenticationResponse;
@@ -37,6 +38,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@NoArgsConstructor
 public class AuthServiceImpl implements AuthService {
     @Value("${application.mailing.fontend.activation-url}")
     private String activationUrl;
@@ -55,13 +57,13 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private TokenRepository tokenRepository;
 
-    AuthServiceImpl authService;
 
-
+    @Autowired
     public AuthServiceImpl(PasswordEncoder passwordEncoder, EmailService emailService, JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.jwtService = jwtService;
+
     }
 
     @Override
@@ -103,6 +105,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
+    @Transactional
     public void activateAccount(String token) throws MessagingException {
         Optional<Token> savedToken = tokenRepository.findByToken(token);
         if (savedToken.isEmpty()) {
@@ -113,9 +116,10 @@ public class AuthServiceImpl implements AuthService {
         if (LocalDateTime.now().isAfter(tokenUser.getExpiresAt())) {
             sendValidationEmail(tokenUser.getApplicationUser());
             throw new ActivationCodeExpired("Activation token has expired. A new token has been sent to the same email address");
+
         }
 
-        authService.activateAccountTransactional(tokenUser);
+        activateAccountTransactional(tokenUser);
     }
 
 
@@ -147,7 +151,8 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private String generateAndSaveActivationToken(ApplicationUser applicationUser) {
-        String generatedToken = generateActivationCode(6);
+        int activationTokenLength = 6;
+        String generatedToken = generateActivationCode(activationTokenLength);
         var token = Token.builder()
                 .token(generatedToken)
                 .createdAt(LocalDateTime.now())
