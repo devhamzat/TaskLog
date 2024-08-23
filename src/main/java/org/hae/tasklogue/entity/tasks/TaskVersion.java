@@ -1,11 +1,12 @@
-package org.hae.tasklogue.entity;
+package org.hae.tasklogue.entity.tasks;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hae.tasklogue.utils.TaskStatus;
+import org.hae.tasklogue.entity.applicationUser.ApplicationUser;
+import org.hae.tasklogue.utils.enums.TaskStatus;
 
 import java.time.LocalDateTime;
 
