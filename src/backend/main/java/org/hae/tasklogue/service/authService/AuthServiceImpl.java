@@ -3,6 +3,7 @@ package org.hae.tasklogue.service.authService;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
 import org.hae.tasklogue.dto.requestdto.SignInRequest;
@@ -39,8 +40,9 @@ import java.util.Optional;
 
 @Service
 @NoArgsConstructor
+@AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
-    @Value("${application.mailing.fontend.activation-url}")
+    @Value("${application.mailing.frontend.activation-url}")
     private String activationUrl;
 
     private PasswordEncoder passwordEncoder;
