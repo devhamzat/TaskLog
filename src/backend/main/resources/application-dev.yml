@@ -1,0 +1,58 @@
+spring:
+  config:
+    import: "classpath:/secrets.properties"
+  datasource:
+    url: jdbc:postgresql://${host}:${postgresql.port}/${postgresql.db}
+    username: ${postgresql.username}
+    password: ${postgresql.password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database: postgresql
+  mail:
+    host: ${host}
+    port: ${mail.port}
+    username: ${mail.password}
+    password: ${mail.port}
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enable: true
+          connectiontimeout: 5000
+          timeout: 3000
+          writetimeout: 5000
+  main:
+    web-application-type: servlet
+
+application:
+  security:
+    jwt:
+      secret-key: ${jwt.secret.key}
+      expiration: ${jwt.expiration}
+      jwt-header: AUTHORIZATION
+  mailing:
+    frontend:
+      collaboration-acceptance: ${collaboration.acceptance.url}
+      activation-url: ${activation.url}
+  frontend:
+    cors:
+      cors-allowed: ${cors.allowed}
+
+server:
+  port: ${application.port}
+  error:
+    include-message: always
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.type.descriptor.sql: trace
+    com.zaxxer.hikari: debug

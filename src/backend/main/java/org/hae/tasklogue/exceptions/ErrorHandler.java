@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import static org.hae.tasklogue.utils.enums.ErrorCodes.*;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+import static org.springframework.http.HttpStatus.*;
 
 @ControllerAdvice
 @RestController
@@ -81,6 +80,16 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(
                 ApplicationError.builder()
                         .message(exception.getMessage())
+                        .build()
+        );
+    }
+    @ExceptionHandler(ForbiddenRequest.class)
+    public ResponseEntity<ApplicationError> handleForbiddenRequest(ForbiddenRequest forbiddenRequest){
+        return ResponseEntity.status(FORBIDDEN).body(
+                ApplicationError.builder()
+                        .code(FORBIDDEN_REQUEST.getCode())
+                        .description(FORBIDDEN_REQUEST.getDescription())
+                        .message(forbiddenRequest.getMessage())
                         .build()
         );
     }

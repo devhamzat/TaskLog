@@ -2,6 +2,7 @@ package org.hae.tasklogue.utils.enums;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -14,7 +15,8 @@ public enum ErrorCodes {
     BAD_CREDENTIALS(304, FORBIDDEN, "USERNAME AND/OR PASSWORD IS INCORRECT"),
     ACCOUNT_EXIST(409,BAD_REQUEST,"ACCOUNT ALREADY EXISTS"),
     ACTIVATION_CODE_EXPIRED(410, BAD_REQUEST, "ACTIVATION CODE EXPIRED"),
-    EMPTY_REQUIRED_FIELDS(422, BAD_REQUEST,"USERNAME/EMAIL/PASSWORD IS EMPTY");
+    EMPTY_REQUIRED_FIELDS(422, BAD_REQUEST,"USERNAME/EMAIL/PASSWORD IS EMPTY"),
+    FORBIDDEN_REQUEST(403, FORBIDDEN, "Forbidden ");
 
 
     @Getter

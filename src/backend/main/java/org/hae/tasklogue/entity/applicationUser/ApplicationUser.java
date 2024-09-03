@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "users")
@@ -34,9 +34,6 @@ import static jakarta.persistence.FetchType.LAZY;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class ApplicationUser implements UserDetails, Principal {
-
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    private Integer id;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
@@ -73,7 +70,7 @@ public class ApplicationUser implements UserDetails, Principal {
 
     private boolean isAccountLocked;
 
-    @ManyToMany(fetch = LAZY)
+    @ManyToMany(fetch = EAGER)
     private List<Role> roles;
 
 
