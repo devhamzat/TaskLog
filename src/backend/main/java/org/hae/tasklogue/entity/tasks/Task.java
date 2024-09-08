@@ -9,6 +9,7 @@ import org.hae.tasklogue.entity.applicationUser.ApplicationUser;
 import org.hae.tasklogue.utils.enums.TaskStatus;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+@EntityListeners(AuditingEntityListener.class)
 public class Task {
     @Column(name = "task_id")
     @Id
@@ -28,7 +30,7 @@ public class Task {
     @Column(name = "task_details", columnDefinition = "Text")
     private String taskDetails;
     private TaskStatus status;
-    @CreatedDate
+    @Create
     private LocalDate created_At;
     @ManyToOne
     @JoinColumn(name = "userName", nullable = false, updatable = false)

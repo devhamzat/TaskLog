@@ -29,9 +29,11 @@ public class AuthController {
 
     @PostMapping(value = "/sign_in")
     public ResponseEntity<AuthenticationResponse> authentication(@RequestBody @Valid SignInRequest signInRequest) {
-
+        log.info("signin request: {}", signInRequest.getUserName());
         return ResponseEntity.ok(authService.authentication(signInRequest).getBody());
+
     }
+
     @GetMapping(value = "/activate_account")
     public void activateAccount(
             @RequestParam String token
