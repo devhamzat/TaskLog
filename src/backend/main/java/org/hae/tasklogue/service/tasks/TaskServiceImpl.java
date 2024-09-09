@@ -125,8 +125,8 @@ public class TaskServiceImpl implements TaskService {
         dto.setTaskId(task.getTaskId());
         dto.setTaskTitle(task.getTaskTittle());
         dto.setTaskDetails(task.getTaskDetails());
+        dto.setCreatedAt(task.getCreated_At());
         dto.setTaskStatus(String.valueOf(task.getStatus()));
-        dto.setCreatedAt(LocalDateTime.from(task.getCreated_At()));
         dto.setCreatedBy(task.getCreated_By().getUsername());
         dto.setCollaborators(task.getCollaborators().stream()
                 .map(ApplicationUser::getUsername)

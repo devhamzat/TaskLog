@@ -12,6 +12,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,8 +31,8 @@ public class Task {
     @Column(name = "task_details", columnDefinition = "Text")
     private String taskDetails;
     private TaskStatus status;
-    @Create
-    private LocalDate created_At;
+    @CreatedDate
+    private LocalDateTime created_At;
     @ManyToOne
     @JoinColumn(name = "userName", nullable = false, updatable = false)
     @CreatedBy

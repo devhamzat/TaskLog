@@ -37,7 +37,7 @@ public class ApplicationUser implements UserDetails, Principal {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
     @Column(insertable = false, name = "updated_at")
