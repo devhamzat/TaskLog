@@ -83,8 +83,9 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                         .build()
         );
     }
+
     @ExceptionHandler(ForbiddenRequest.class)
-    public ResponseEntity<ApplicationError> handleForbiddenRequest(ForbiddenRequest forbiddenRequest){
+    public ResponseEntity<ApplicationError> handleForbiddenRequest(ForbiddenRequest forbiddenRequest) {
         return ResponseEntity.status(FORBIDDEN).body(
                 ApplicationError.builder()
                         .code(FORBIDDEN_REQUEST.getCode())
@@ -93,5 +94,16 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                         .build()
         );
     }
+
+    @ExceptionHandler(TaskNotExisting.class)
+    public ResponseEntity<ApplicationError> handleForbiddenRequest(TaskNotExisting taskNotExisting) {
+        return ResponseEntity.status(BAD_REQUEST).body(
+                ApplicationError.builder()
+                        .code(400)
+                        .message(taskNotExisting.getMessage())
+                        .build()
+        );
+    }
+
 
 }

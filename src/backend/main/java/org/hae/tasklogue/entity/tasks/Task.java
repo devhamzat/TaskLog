@@ -11,7 +11,6 @@ import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,9 +33,9 @@ public class Task {
     @CreatedDate
     private LocalDateTime created_At;
     @ManyToOne
-    @JoinColumn(name = "userName", nullable = false, updatable = false)
+    @JoinColumn(name = "user_name", nullable = false, updatable = false)
     @CreatedBy
-    private ApplicationUser created_By;
+    private ApplicationUser createdBy;
     @ManyToMany
     private Set<ApplicationUser> collaborators = new HashSet<>();
 
