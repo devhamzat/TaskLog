@@ -110,7 +110,6 @@ public class TaskServiceImpl implements TaskService {
         log.info("Retrieving tasks for user: {}, page: {}, size: {}", username, page, size);
         return taskPage.map(this::convertToDto);
     }
-    
 
 
     @Override
@@ -119,7 +118,7 @@ public class TaskServiceImpl implements TaskService {
         applicationUserRepository.findApplicationUserByUserName(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found:   " + username));
 
-                        String retrievedTaskId = taskById.getTaskId();
+        String retrievedTaskId = taskById.getTaskId();
         if (retrievedTaskId == null || retrievedTaskId.isEmpty()) {
             log.info("task id empty");
             throw new EmptyRequiredFields("Task ID cannot be null or empty.");
@@ -141,16 +140,6 @@ public class TaskServiceImpl implements TaskService {
             return ResponseEntity.ok(response);
         }).orElseThrow(() -> new TaskNotExisting("Task not found"));
     }
-
-
-
-
-
-
-
-
-
-
 
 
     private GetTaskResponse convertToDto(Task task) {

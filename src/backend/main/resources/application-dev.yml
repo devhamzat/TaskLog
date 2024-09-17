@@ -1,11 +1,13 @@
 spring:
   config:
     import: "classpath:/secrets.properties"
+
   datasource:
     url: jdbc:postgresql://${host}:${postgresql.port}/${postgresql.db}
     username: ${postgresql.username}
     password: ${postgresql.password}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
