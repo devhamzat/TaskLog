@@ -2,6 +2,7 @@ package org.hae.tasklogue.service.email;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import org.hae.tasklogue.entity.tasks.Task;
 import org.hae.tasklogue.utils.enums.EmailTemplateName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,30 +19,32 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED;
 
 @Service
-public class EmailService {
+public class CollaboratorEmailService {
     @Autowired
     private JavaMailSender javaMailSender;
+    private SpringTemplateEngine templateEngine;
 
-    public EmailService(SpringTemplateEngine templateEngine) {
+    public CollaboratorEmailService(SpringTemplateEngine templateEngine) {
 
         this.templateEngine = templateEngine;
     }
 
-    private SpringTemplateEngine templateEngine;
 
     @Async
 
     public void sendEmail(String to,
                           String userName,
                           EmailTemplateName emailTemplateName,
-                          String confirmationUrl,
-                          String activationCode,
+                          String acceptanceUrl,
+                          String taskId,
+                          String taskTitle,
+                          String InviterUsername,
                           String subject
     ) throws MessagingException {
 
         String templatename;
         if (emailTemplateName == null) {
-            templatename = "confirm-email";
+            templatename = "collaboration-invite";
         } else {
             templatename = emailTemplateName.name();
         }
@@ -53,8 +56,11 @@ public class EmailService {
 
         Map<String, Object> props = new HashMap<>();
         props.put("Username", userName);
-        props.put("confirmationUrl", confirmationUrl);
-        props.put("activation_code", activationCode);
+        props.put("inviteUsername", InviterUsername);
+        props.put("taskId", taskId);
+        props.put("taskTitle", taskTitle);
+        props.put("AcceptanceUrl", acceptanceUrl);
+
 
         Context context = new Context();
         context.setVariables(props);
@@ -69,4 +75,5 @@ public class EmailService {
         helper.setText(template, true);
         javaMailSender.send(mimeMessage);
     }
+
 }

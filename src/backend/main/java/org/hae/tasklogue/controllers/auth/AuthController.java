@@ -3,6 +3,7 @@ package org.hae.tasklogue.controllers.auth;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
 import org.hae.tasklogue.dto.requestdto.SignInRequest;
 import org.hae.tasklogue.dto.response.AuthenticationResponse;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("auth")
 @Tag(name = "Authentication")
-
+@Slf4j
 public class AuthController {
     @Autowired
     private AuthService authService;
@@ -28,9 +29,11 @@ public class AuthController {
 
     @PostMapping(value = "/sign_in")
     public ResponseEntity<AuthenticationResponse> authentication(@RequestBody @Valid SignInRequest signInRequest) {
-
+        log.info("signin request: {}", signInRequest.getUserName());
         return ResponseEntity.ok(authService.authentication(signInRequest).getBody());
+
     }
+
     @GetMapping(value = "/activate_account")
     public void activateAccount(
             @RequestParam String token

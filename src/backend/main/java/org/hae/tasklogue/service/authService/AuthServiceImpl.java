@@ -18,7 +18,7 @@ import org.hae.tasklogue.repository.ApplicationUserRepository;
 import org.hae.tasklogue.repository.RoleRepository;
 import org.hae.tasklogue.repository.TokenRepository;
 import org.hae.tasklogue.security.JwtService;
-import org.hae.tasklogue.service.email.EmailService;
+import org.hae.tasklogue.service.email.TokenEmailService;
 import org.hae.tasklogue.utils.enums.EmailTemplateName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     private String activationUrl;
 
     private PasswordEncoder passwordEncoder;
-    private EmailService emailService;
+    private TokenEmailService tokenEmailService;
     private JwtService jwtService;
 
 
@@ -61,9 +61,9 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Autowired
-    public AuthServiceImpl(PasswordEncoder passwordEncoder, EmailService emailService, JwtService jwtService) {
+    public AuthServiceImpl(PasswordEncoder passwordEncoder, TokenEmailService tokenEmailService, JwtService jwtService) {
         this.passwordEncoder = passwordEncoder;
-        this.emailService = emailService;
+        this.tokenEmailService = tokenEmailService;
         this.jwtService = jwtService;
 
     }
@@ -142,7 +142,7 @@ public class AuthServiceImpl implements AuthService {
 
     private void sendValidationEmail(ApplicationUser applicationUser) throws MessagingException {
         String newToken = generateAndSaveActivationToken(applicationUser);
-        emailService.sendEmail(applicationUser.getEmail(),
+        tokenEmailService.sendEmail(applicationUser.getEmail(),
                 applicationUser.getUsername(),
                 EmailTemplateName.Activate_Account,
                 activationUrl,

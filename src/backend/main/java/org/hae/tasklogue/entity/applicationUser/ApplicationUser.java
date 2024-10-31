@@ -16,7 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -24,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static jakarta.persistence.FetchType.LAZY;
+import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "users")
@@ -35,12 +34,9 @@ import static jakarta.persistence.FetchType.LAZY;
 @EntityListeners(AuditingEntityListener.class)
 public class ApplicationUser implements UserDetails, Principal {
 
-//    @GeneratedValue(strategy = GenerationType.AUTO)
-//    private Integer id;
-
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreatedDate
-    private LocalDate createdDate;
+    private LocalDateTime createdDate;
 
     @LastModifiedDate
     @Column(insertable = false, name = "updated_at")
@@ -73,7 +69,7 @@ public class ApplicationUser implements UserDetails, Principal {
 
     private boolean isAccountLocked;
 
-    @ManyToMany(fetch = LAZY)
+    @ManyToMany(fetch = EAGER)
     private List<Role> roles;
 
 
