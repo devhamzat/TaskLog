@@ -1,4 +1,4 @@
-package org.hae.tasklogue.service.tasks;
+package org.hae.tasklogue.service.tasks.impl;
 
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
@@ -14,7 +14,8 @@ import org.hae.tasklogue.exceptions.errors.ForbiddenRequest;
 import org.hae.tasklogue.exceptions.errors.TaskNotExisting;
 import org.hae.tasklogue.repository.ApplicationUserRepository;
 import org.hae.tasklogue.repository.taskrepository.TaskRepository;
-import org.hae.tasklogue.service.email.CollaboratorEmailService;
+import org.hae.tasklogue.service.email.EmailService;
+import org.hae.tasklogue.service.tasks.TaskService;
 import org.hae.tasklogue.utils.TaskIdGenerator;
 import org.hae.tasklogue.utils.enums.EmailTemplateName;
 import org.hae.tasklogue.utils.enums.TaskStatus;
@@ -28,6 +29,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -39,22 +42,22 @@ import java.util.stream.Collectors;
 public class TaskServiceImpl implements TaskService {
     @Value("${application.mailing.frontend.collaboration-acceptance}")
     private String acceptanceUrl;
-    private final CollaboratorEmailService collaboratorEmailService;
+    private final EmailService emailService;
     private final TaskIdGenerator taskIdGenerator;
     private final TaskRepository taskRepository;
     private final ApplicationUserRepository applicationUserRepository;
 
     @Autowired
-    public TaskServiceImpl(ApplicationUserRepository applicationUserRepository, TaskRepository taskRepository, TaskIdGenerator taskIdGenerator, CollaboratorEmailService collaboratorEmailService) {
+    public TaskServiceImpl(ApplicationUserRepository applicationUserRepository, TaskRepository taskRepository, TaskIdGenerator taskIdGenerator, EmailService emailService) {
         this.applicationUserRepository = applicationUserRepository;
         this.taskRepository = taskRepository;
         this.taskIdGenerator = taskIdGenerator;
-        this.collaboratorEmailService = collaboratorEmailService;
+        this.emailService = emailService;
 
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackOn = Exception.class)
     public ResponseEntity<AddTaskResponse> addTask(AddTaskDTO addTask, Authentication connectedUser) throws MessagingException {
 
         String username = checkConnectedUser(connectedUser);
@@ -62,18 +65,42 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         Task task = new Task();
+        LocalTime time = LocalTime.now();
+        LocalDate date = LocalDate.now();
+        task.setCreatedTime(time);
         task.setTaskId(taskIdGenerator.generateTaskId());
         task.setTaskTittle(addTask.getTitle());
-        task.setTaskDetails(addTask.getTaskDetails());
+        task.setTaskDescription(addTask.getDescription());
+        if (addTask.getBeginDate() == null || addTask.getBeginDate().toString().isEmpty()) {
+            task.setTaskBeginDate(date);
+        } else {
+            task.setTaskBeginDate(addTask.getBeginDate());
+        }
+        if (addTask.getBeginTime() == null || addTask.getBeginTime().toString().isEmpty()) {
+            task.setTaskBeginTime(time);
+        } else {
+            task.setTaskBeginTime(addTask.getBeginTime());
+        }
+        if (addTask.getDueDate() == null || addTask.getDueDate().toString().isEmpty()) {
+            task.setDueDate(date);
+        } else {
+            task.setDueDate(addTask.getDueDate());
+        }
         task.setStatus(TaskStatus.pending);
         task.setCreatedBy(user);
+        task.setPriority(addTask.getPriority());
+        if (addTask.getDueTime() == null || addTask.getDueTime().toString().isEmpty()) {
+            task.setTaskDueTime(time.plusHours(24));
+        } else {
+            task.setTaskDueTime(addTask.getDueTime());
+        }
         if (addTask.getCollaboratorUsernames() != null && !addTask.getCollaboratorUsernames().isEmpty()) {
             Set<ApplicationUser> collaborators = new HashSet<>(addTask.getCollaboratorUsernames());
             for (ApplicationUser collaboratorUsername : addTask.getCollaboratorUsernames()) {
                 ApplicationUser collaborator = applicationUserRepository.findApplicationUserByUserName(collaboratorUsername.getUsername())
                         .orElseThrow(() -> new UsernameNotFoundException("collaborator username not found"));
                 collaborators.add(collaborator);
-                collaboratorEmailService.sendEmail(
+                emailService.sendCollaboratorEmail(
                         collaborator.getEmail(),
                         collaborator.getUsername(),
                         EmailTemplateName.Accept_collaboration,
@@ -86,8 +113,6 @@ public class TaskServiceImpl implements TaskService {
             }
             task.setCollaborators(collaborators);
         }
-
-
         taskRepository.save(task);
         AddTaskResponse addTaskResponse = new AddTaskResponse();
         addTaskResponse.setTaskId(task.getTaskId());
@@ -129,8 +154,8 @@ public class TaskServiceImpl implements TaskService {
             log.info("Retrieved task with ID: {}", foundTask.getTaskId());
             GetTaskResponse response = new GetTaskResponse();
             response.setTaskId(foundTask.getTaskId());
-            response.setCreatedAt(foundTask.getCreated_At());
-            response.setTaskDetails(foundTask.getTaskDetails());
+            response.setCreatedAt(foundTask.getCreatedDate());
+            response.setTaskDetails(foundTask.getTaskDescription());
             response.setTaskStatus(String.valueOf(foundTask.getStatus()));
             response.setTaskTitle(foundTask.getTaskTittle());
             List<String> collaboratorNames = foundTask.getCollaborators().stream()
@@ -146,8 +171,17 @@ public class TaskServiceImpl implements TaskService {
         GetTaskResponse dto = new GetTaskResponse();
         dto.setTaskId(task.getTaskId());
         dto.setTaskTitle(task.getTaskTittle());
-        dto.setTaskDetails(task.getTaskDetails());
-        dto.setCreatedAt(task.getCreated_At());
+        dto.setTaskDetails(task.getTaskDescription());
+        dto.setCreatedAt(task.getCreatedDate());
+        dto.setPriority(task.getPriority());
+        dto.setDueDate(task.getDueDate());
+        if (task.getTaskBeginDate() == null || task.getTaskBeginDate().toString().isEmpty()) {
+            dto.setBeginDate(task.getCreatedDate());
+        } else {
+            dto.setBeginDate(task.getTaskBeginDate());
+        }
+        dto.setDueTime(task.getTaskDueTime());
+        dto.setBeginTime(task.getTaskBeginTime());
         dto.setTaskStatus(String.valueOf(task.getStatus()));
         dto.setCreatedBy(task.getCreatedBy().getUsername());
         dto.setCollaborators(task.getCollaborators().stream()

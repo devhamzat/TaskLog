@@ -2,6 +2,7 @@ package org.hae.tasklogue.service.authService;
 
 import jakarta.mail.MessagingException;
 import org.hae.tasklogue.dto.requestdto.ApplicationUserSignUp;
+import org.hae.tasklogue.dto.requestdto.ForgotPassword;
 import org.hae.tasklogue.dto.requestdto.SignInRequest;
 import org.hae.tasklogue.dto.response.AuthenticationResponse;
 import org.hae.tasklogue.dto.response.CreationResponse;
@@ -13,4 +14,8 @@ public interface AuthService {
     ResponseEntity<AuthenticationResponse> authentication(SignInRequest signInRequest);
 
     void activateAccount(String token) throws MessagingException;
+
+    default void forgotPassword(ForgotPassword forgotPassword) {
+
+    }
 }

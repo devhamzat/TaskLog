@@ -9,4 +9,6 @@ import org.springframework.http.ResponseEntity;
 @AllArgsConstructor
 public class AuthenticationResponse  {
     private String token;
+    private String tokenType;
+    private String message;
 }

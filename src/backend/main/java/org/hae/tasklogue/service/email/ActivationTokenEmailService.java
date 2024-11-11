@@ -18,11 +18,11 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.springframework.mail.javamail.MimeMessageHelper.MULTIPART_MODE_MIXED;
 
 @Service
-public class TokenEmailService {
+public class ActivationTokenEmailService {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public TokenEmailService(SpringTemplateEngine templateEngine) {
+    public ActivationTokenEmailService(SpringTemplateEngine templateEngine) {
 
         this.templateEngine = templateEngine;
     }
@@ -30,7 +30,6 @@ public class TokenEmailService {
     private SpringTemplateEngine templateEngine;
 
     @Async
-
     public void sendEmail(String to,
                           String userName,
                           EmailTemplateName emailTemplateName,

@@ -11,6 +11,7 @@ import org.hae.tasklogue.exceptions.errors.TaskNotExisting;
 import org.hae.tasklogue.repository.ApplicationUserRepository;
 import org.hae.tasklogue.repository.taskrepository.TaskRepository;
 import org.hae.tasklogue.service.email.CollaboratorEmailService;
+import org.hae.tasklogue.service.tasks.impl.TaskServiceImpl;
 import org.hae.tasklogue.utils.TaskIdGenerator;
 import org.hae.tasklogue.utils.enums.TaskStatus;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,7 +61,7 @@ class TaskServiceImplTest {
 
         AddTaskDTO addTaskDTO = new AddTaskDTO();
         addTaskDTO.setTitle("Test Task");
-        addTaskDTO.setTaskDetails("Test Details");
+        addTaskDTO.setDescription("Test Details");
         Set<ApplicationUser> collaborators = new HashSet<>();
         ApplicationUser collaborator = new ApplicationUser();
         collaborator.setUserName("collaborator");
@@ -131,7 +132,7 @@ class TaskServiceImplTest {
         Task task = new Task();
         task.setTaskId("TASK-001");
         task.setTaskTittle("Test Task");
-        task.setTaskDetails("Test Details");
+        task.setTaskDescription("Test Details");
         task.setStatus(TaskStatus.pending);
         task.setCreatedBy(user);
 

@@ -18,12 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
-import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Table(name = "users")
@@ -43,7 +40,7 @@ public class ApplicationUser implements UserDetails, Principal {
     private LocalDateTime lastModifiedDate;
 
     @Id
-    @Column(name = "userName", nullable = false, unique = true)
+    @Column(name = "user_Name", nullable = false, unique = true)
     private String userName;
 
     @Column(name = "display_name")
@@ -69,9 +66,8 @@ public class ApplicationUser implements UserDetails, Principal {
 
     private boolean isAccountLocked;
 
-    @ManyToMany(fetch = EAGER)
-    private List<Role> roles;
-
+    @OneToOne()
+    private Role roles;
 
     @Override
     public String getName() {
@@ -80,9 +76,7 @@ public class ApplicationUser implements UserDetails, Principal {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
-                .collect(Collectors.toList());
+        return Collections.singleton(new SimpleGrantedAuthority(roles.getName()));
     }
 
     @Override

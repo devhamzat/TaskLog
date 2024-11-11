@@ -6,12 +6,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hae.tasklogue.entity.applicationUser.ApplicationUser;
+import org.hae.tasklogue.utils.enums.TaskPriority;
 import org.hae.tasklogue.utils.enums.TaskStatus;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,16 +30,21 @@ public class Task {
     private String taskId;
     private String taskTittle;
     @Column(name = "task_details", columnDefinition = "Text")
-    private String taskDetails;
+    private String taskDescription;
     private TaskStatus status;
+    private TaskPriority priority;
     @CreatedDate
-    private LocalDateTime created_At;
+    private LocalDate createdDate;
     @ManyToOne
     @JoinColumn(name = "user_name", nullable = false, updatable = false)
     @CreatedBy
     private ApplicationUser createdBy;
     @ManyToMany
     private Set<ApplicationUser> collaborators = new HashSet<>();
-
-
+    @Column(nullable = false)
+    private LocalDate dueDate;
+    private LocalDate taskBeginDate;
+    private LocalTime taskDueTime;
+    private LocalTime createdTime;
+    private LocalTime taskBeginTime;
 }

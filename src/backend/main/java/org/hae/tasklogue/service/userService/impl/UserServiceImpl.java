@@ -1,9 +1,10 @@
-package org.hae.tasklogue.service.userService;
+package org.hae.tasklogue.service.userService.impl;
 
 import jakarta.transaction.Transactional;
 import org.hae.tasklogue.dto.requestdto.EditProfileRequest;
 import org.hae.tasklogue.dto.response.EditProfileResponse;
 import org.hae.tasklogue.entity.applicationUser.ApplicationUser;
+import org.hae.tasklogue.service.userService.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
